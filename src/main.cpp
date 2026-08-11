@@ -1,13 +1,15 @@
 #include <Arduino.h>
 #include <vehicle.h>
-#include <ultrasonic.h>
 #include <ESP32Servo.h>
+#include <ultrasonic.h>
+ultrasonic myUltrasonic;
+int UT_distance = 0;
 
 vehicle myCar;
 Servo myServo;
 
-#define leftLED 2
-#define rightLED 12
+#define leftLed 2
+#define rightLed 12
 #define Anticlockwise Contrarotate 
 #define buzzer 33
 #define servoPin 25 
@@ -25,43 +27,63 @@ myCar.Move(Move_Right, 255):
 */
 
 void setup(){
+ /*
   myCar.Init();
   myCar.Move(Forward,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Clockwise,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Forward,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Clockwise,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Forward,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Contrarotate, 255);
-  delay(750);
+  delay(2000);
   myCar.Move(Forward,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Contrarotate, 255);
-  delay(750);
+  delay(2000);
   myCar.Move(Forward,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Move_Right,255);
-  delay(750);
+  delay(2000);
   myCar.Move(Stop,0);
+  */
+
+ // lights
+  //pinMode(leftLed, OUTPUT);
+  //pinMode(rightLed,OUTPUT);
+
+  // eye sensor
+  Serial.begin(9600);
+  myUltrasonic.Init(13,14);
 }
 
 void loop()
 {
-  //digitalWrite(leftLED, HIGH);
-  //digitalWrite(rightLED, LOW);
-  //myCar.Move(Move_Left, 255);
-  //tone(buzzer, 262);
+  /*
+  //flash left then right
+  digitalWrite(leftLed, HIGH);
+  digitalWrite(rightLed, LOW);
 
-  //delay(1000);
+  delay(1000);
 
-  //digitalWrite(leftLED, LOW);
-  //digitalWrite(rightLED, HIGH);
-  //myCar.Move(Move_Right, 255);
-  //noTone(buzzer);
+  digitalWrite(leftLed, LOW);
+  digitalWrite(rightLed, HIGH);
 
-  //delay(1000);
+  delay(1000);
+  */
+
+  //Eye sensor
+  UT_distance = myUltrasonic.Ranging();
+  if (UT_distance <= 25){
+    myCar.Move(Contrarotate, 180):
+  //PAGE 40
+  Serial.print(UT_distance);
+  // The serial port shows the distance of ultrasonic detection 
+  Serial.println("cm");
+  delay(1000);
+  
 }

@@ -10,9 +10,9 @@ Servo myServo;
 
 #define leftLed 2
 #define rightLed 12
-#define Anticlockwise Contrarotate 
+#define Anticlockwise Contrarotate
 #define buzzer 33
-#define servoPin 25 
+#define servoPin 25
 
 /*
 myCar.Move(Forward, 255):
@@ -26,40 +26,41 @@ myCar.Move(Move_Left, 255):
 myCar.Move(Move_Right, 255):
 */
 
-void setup(){
+void setup()
+{
 
   myCar.Init();
-   /*
-  myCar.Move(Forward,255);
-  delay(2000);
-  myCar.Move(Clockwise,255);
-  delay(2000);
-  myCar.Move(Forward,255);
-  delay(2000);
-  myCar.Move(Clockwise,255);
-  delay(2000);
-  myCar.Move(Forward,255);
-  delay(2000);
-  myCar.Move(Contrarotate, 255);
-  delay(2000);
-  myCar.Move(Forward,255);
-  delay(2000);
-  myCar.Move(Contrarotate, 255);
-  delay(2000);
-  myCar.Move(Forward,255);
-  delay(2000);
-  myCar.Move(Move_Right,255);
-  delay(2000);
-  myCar.Move(Stop,0);
-  */
+  /*
+ myCar.Move(Forward,255);
+ delay(2000);
+ myCar.Move(Clockwise,255);
+ delay(2000);
+ myCar.Move(Forward,255);
+ delay(2000);
+ myCar.Move(Clockwise,255);
+ delay(2000);
+ myCar.Move(Forward,255);
+ delay(2000);
+ myCar.Move(Contrarotate, 255);
+ delay(2000);
+ myCar.Move(Forward,255);
+ delay(2000);
+ myCar.Move(Contrarotate, 255);
+ delay(2000);
+ myCar.Move(Forward,255);
+ delay(2000);
+ myCar.Move(Move_Right,255);
+ delay(2000);
+ myCar.Move(Stop,0);
+ */
 
- // lights
-  //pinMode(leftLed, OUTPUT);
-  //pinMode(rightLed,OUTPUT);
+  // lights
+  pinMode(leftLed, OUTPUT);
+  pinMode(rightLed,OUTPUT);
 
   // eye sensor
   Serial.begin(115200);
-  myUltrasonic.Init(13,14);
+  myUltrasonic.Init(13, 14);
 }
 
 void loop()
@@ -77,18 +78,30 @@ void loop()
   delay(1000);
   */
 
-  //Eye sensor
+  // Eye sensor
   UT_distance = myUltrasonic.Ranging();
-  if (UT_distance <= 25){
-     myCar.Move(Contrarotate, 180);
-     Serial.println("avoid");
-  }else{
- myCar.Move(Forward,100);   
+  if (UT_distance <= 25)
+  {
+    myCar.Move(Contrarotate, 180);
+    Serial.println("avoid");
+
+    digitalWrite(leftLed, HIGH);
+    digitalWrite(rightLed, LOW);
+
+    delay(100);
+
+    digitalWrite(leftLed, LOW);
+    digitalWrite(rightLed, HIGH);
+
+    delay(100);
   }
-   
+  else
+  {
+    myCar.Move(Forward, 100);
+  }
+
   Serial.print(UT_distance);
-  // The serial port shows the distance of ultrasonic detection 
+  // The serial port shows the distance of ultrasonic detection
   Serial.println("cm");
   delay(100);
-  
 }

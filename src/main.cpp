@@ -61,6 +61,9 @@ void setup()
   // eye sensor
   Serial.begin(115200);
   myUltrasonic.Init(13, 14);
+  
+  myServo.attach(servoPin);//initialize servo motor)
+  myServo.write(0);
 }
 
 void loop()
@@ -78,7 +81,7 @@ void loop()
   delay(1000);
   */
 
-  // Eye sensor
+  /*Eye sensor v1
   UT_distance = myUltrasonic.Ranging();
   if (UT_distance <= 25)
   {
@@ -95,4 +98,16 @@ void loop()
   // The serial port shows the distance of ultrasonic detection
   Serial.println("cm");
   delay(100);
+  */
+
+  //eye sensor v2 - best route
+  for(int angle=0;angle <= 180;angle++){
+    //Servo motor from 0 degress to 180 degrees
+    myServo.write(angle);
+    delay(10);
+  }
+  for(int angle =180;angle >= 0;angle--){
+    myServo.write(angle);
+    delay(10);
+} 
 }

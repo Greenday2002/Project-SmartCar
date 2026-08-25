@@ -2,10 +2,10 @@
 #include <vehicle.h>
 #include <ESP32Servo.h>
 #include <ultrasonic.h>
-ultrasonic myUltrasonic;
-int UT_distance = 0;
 
 vehicle myCar;
+ultrasonic myUltrasonic;
+int UT_distance = 0;
 Servo myServo;
 
 #define leftLed 2
@@ -55,8 +55,8 @@ void setup()
  */
 
   // lights
-  pinMode(leftLed, OUTPUT);
-  pinMode(rightLed,OUTPUT);
+  // pinMode(leftLed, OUTPUT);
+  // pinMode(rightLed,OUTPUT);
 
   // eye sensor
   Serial.begin(115200);
@@ -82,22 +82,13 @@ void loop()
   UT_distance = myUltrasonic.Ranging();
   if (UT_distance <= 25)
   {
-    myCar.Move(Contrarotate, 180);
-    Serial.println("avoid");
-
-    digitalWrite(leftLed, HIGH);
-    digitalWrite(rightLed, LOW);
-
-    delay(100);
-
-    digitalWrite(leftLed, LOW);
-    digitalWrite(rightLed, HIGH);
-
-    delay(100);
+    myCar.Move(Anticlockwise, 180);
+    delay(1500); // The turning time is moified to realize the rotation of different angles
+    myCar.Move(Stop, 0);
   }
   else
   {
-    myCar.Move(Forward, 100);
+    myCar.Move(Forward, 150);
   }
 
   Serial.print(UT_distance);

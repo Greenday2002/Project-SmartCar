@@ -79,6 +79,9 @@ void setup()
   Serial.begin(115200);
   myUltrasonic.Init(13, 14);
 
+  tone(buzzer,262);
+  
+
   myServo.attach(servoPin); // initialize servo motor)
   myServo.write(0);
   // eye sensor v2 - best route
@@ -104,7 +107,7 @@ void setup()
   }
   else if (required_turn_degrees < 0)
   {
-    turn_right(required_turn_degrees);
+    turn_right(abs(required_turn_degrees));
   }
 }
 

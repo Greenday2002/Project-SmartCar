@@ -7,8 +7,9 @@ vehicle myCar;
 ultrasonic myUltrasonic;
 int UT_distance = 0;
 Servo myServo;
-int closest_object=1000;
-int closest_object_direction=0;
+int closest_object = 1000;
+int closest_object_direction = 0;
+float ms_per_degree = 5.0;
 
 #define leftLed 2
 #define rightLed 12
@@ -27,6 +28,20 @@ myCar.Move(Anticlockwise, 255):
 myCar.Move(Move_Left, 255):
 myCar.Move(Move_Right, 255):
 */
+
+void turn_left(int degrees)
+{
+  myCar.Move(Anticlockwise, 255);
+  delay(degrees * ms_per_degree);
+  myCar.Move(Stop, 0);
+}
+
+void turn_right(int degrees)
+{
+  myCar.Move(Clockwise, 255);
+  delay(degrees * ms_per_degree);
+  myCar.Move(Stop, 0);
+}
 
 void setup()
 {
@@ -63,23 +78,34 @@ void setup()
   // eye sensor
   Serial.begin(115200);
   myUltrasonic.Init(13, 14);
-  
-  myServo.attach(servoPin);//initialize servo motor)
+
+  myServo.attach(servoPin); // initialize servo motor)
   myServo.write(0);
-   //eye sensor v2 - best route
-  for(int angle=0;angle <= 180;angle++){
-    //Servo motor from 0 degress to 180 degrees
+  // eye sensor v2 - best route
+  for (int angle = 0; angle <= 180; angle++)
+  {
+    // Servo motor from 0 degress to 180 degrees
     myServo.write(angle);
     delay(10);
     UT_distance = myUltrasonic.Ranging();
-    if( UT_distance<closest_object){
-      closest_object=UT_distance;
-      closest_object_direction=angle;
+    if (UT_distance < closest_object)
+    {
+      closest_object = UT_distance;
+      closest_object_direction = angle;
     }
-
   }
   Serial.println(closest_object_direction);
   myServo.write(90);
+  int relative_object_angle = closest_object_direction - 90;
+  int required_turn_degrees = 180 - closest_object_direction;
+  if (required_turn_degrees > 0)
+  {
+    turn_left(required_turn_degrees);
+  }
+  else if (required_turn_degrees < 0)
+  {
+    turn_right(required_turn_degrees);
+  }
 }
 
 void loop()
@@ -116,9 +142,8 @@ void loop()
   delay(100);
   */
 
- 
-//   for(int angle =180;angle >= 0;angle--){
-//     myServo.write(angle);
-//     delay(10);
-// } 
+  //   for(int angle =180;angle >= 0;angle--){
+  //     myServo.write(angle);
+  //     delay(10);
+  // }
 }

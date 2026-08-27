@@ -7,6 +7,8 @@ vehicle myCar;
 ultrasonic myUltrasonic;
 int UT_distance = 0;
 Servo myServo;
+int closest_object=1000;
+int closest_object_direction=0;
 
 #define leftLed 2
 #define rightLed 12
@@ -64,6 +66,20 @@ void setup()
   
   myServo.attach(servoPin);//initialize servo motor)
   myServo.write(0);
+   //eye sensor v2 - best route
+  for(int angle=0;angle <= 180;angle++){
+    //Servo motor from 0 degress to 180 degrees
+    myServo.write(angle);
+    delay(10);
+    UT_distance = myUltrasonic.Ranging();
+    if( UT_distance<closest_object){
+      closest_object=UT_distance;
+      closest_object_direction=angle;
+    }
+
+  }
+  Serial.println(closest_object_direction);
+  myServo.write(90);
 }
 
 void loop()
@@ -100,14 +116,9 @@ void loop()
   delay(100);
   */
 
-  //eye sensor v2 - best route
-  for(int angle=0;angle <= 180;angle++){
-    //Servo motor from 0 degress to 180 degrees
-    myServo.write(angle);
-    delay(10);
-  }
-  for(int angle =180;angle >= 0;angle--){
-    myServo.write(angle);
-    delay(10);
-} 
+ 
+//   for(int angle =180;angle >= 0;angle--){
+//     myServo.write(angle);
+//     delay(10);
+// } 
 }

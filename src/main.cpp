@@ -45,7 +45,7 @@ void turn_right(int degrees)
 
 void setup()
 {
-
+Serial.begin(115200);
   myCar.Init();
   /*
  myCar.Move(Forward,255);
@@ -76,10 +76,10 @@ void setup()
   // pinMode(rightLed,OUTPUT);
 
   // eye sensor
-  Serial.begin(115200);
-  myUltrasonic.Init(13, 14);
+  //Serial.begin(115200);
+  //myUltrasonic.Init(13, 14);
 
-  tone(buzzer,262);
+  //tone(buzzer,262);
   
 
   myServo.attach(servoPin); // initialize servo motor)
@@ -89,6 +89,7 @@ void setup()
   {
     // Servo motor from 0 degress to 180 degrees
     myServo.write(angle);
+    Serial.println(angle);
     delay(10);
     UT_distance = myUltrasonic.Ranging();
     if (UT_distance < closest_object)

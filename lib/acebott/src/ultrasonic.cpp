@@ -17,6 +17,6 @@ float ultrasonic::Ranging()
     delayMicroseconds(10);
     digitalWrite(_trigPin, LOW);
     float distance = pulseIn(_echoPin, HIGH) / 58.00;
-    delay(10);
+    // delay(10);
     return distance;
 }

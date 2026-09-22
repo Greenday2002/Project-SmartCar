@@ -9,7 +9,7 @@ int UT_distance = 0;
 Servo myServo;
 int closest_object = 1000;
 int closest_object_direction = 0;
-float ms_per_degree = 5.0;
+float ms_per_degree = 11.0;
 
 #define leftLed 2
 #define rightLed 12

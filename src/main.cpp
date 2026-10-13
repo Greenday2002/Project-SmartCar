@@ -2,6 +2,7 @@
 #include <vehicle.h>
 #include <ESP32Servo.h>
 #include <ultrasonic.h>
+#include <IRremote.h>
 
 vehicle myCar;
 ultrasonic myUltrasonic;
@@ -11,11 +12,23 @@ int closest_object = 1000;
 int closest_object_direction = 0;
 float ms_per_degree = 11.0;
 
+int IRpin = 4;
+unsigned long lastCommandTime; // record the time of last received command
+const unsigned long commandTimeout = 100; //set the time period (milliseconds)
+uint32_t last_decode = 0; //variable to store last decoded data
+uint32_t current_decode = 0; //variable to store the current decoded data raw
+
 #define leftLed 2
 #define rightLed 12
 #define Anticlockwise Contrarotate
 #define buzzer 33
 #define servoPin 25
+#define IRpin 4
+#define Left_sensor 35
+#define Right_sesnor 39
+
+IRrecv myIRrecv(IRpin);//infared receiver
+int Speed = 255
 
 /*
 myCar.Move(Forward, 255):
@@ -99,6 +112,7 @@ Serial.begin(115200);
       closest_object_direction = angle;
     }
   }
+
   Serial.println(closest_object_direction);
   myServo.write(90);
   int relative_object_angle = closest_object_direction - 90;
@@ -115,10 +129,9 @@ Serial.begin(115200);
 
 void loop()
 {
-  /*
   //flash left then right
-  digitalWrite(leftLed, HIGH);
-  digitalWrite(rightLed, LOW);
+  digitalWrite(leftLed, LOW);
+  digitalWrite(rightLed, HIGH);
 
   delay(1000);
 
@@ -126,7 +139,6 @@ void loop()
   digitalWrite(rightLed, HIGH);
 
   delay(1000);
-  */
 
   /*Eye sensor v1
   UT_distance = myUltrasonic.Ranging();
@@ -151,4 +163,14 @@ void loop()
   //     myServo.write(angle);
   //     delay(10);
   // }
+
+  if(myIRrecv.decode(0)){
+    lastCommandTime = millis();
+    current_decode = myIRrecv.decodedIRData.decodedRawData;
+    if (myIRrecv.decodedIRData.flags) {
+      cirrent_decode = last_decode;
+    }
+
+  Serial.print(current_decode, HEX);
+  //page 67 on starter kit
 }

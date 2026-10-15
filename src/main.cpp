@@ -18,17 +18,17 @@ const unsigned long commandTimeout = 100; //set the time period (milliseconds)
 uint32_t last_decode = 0; //variable to store last decoded data
 uint32_t current_decode = 0; //variable to store the current decoded data raw
 
+IRrecv myIRrecv(IRpin);//infared receiver
+int Speed = 255;
+
 #define leftLed 2
 #define rightLed 12
 #define Anticlockwise Contrarotate
 #define buzzer 33
 #define servoPin 25
-#define IRpin 4
+// #define IRpin 4
 #define Left_sensor 35
 #define Right_sesnor 39
-
-IRrecv myIRrecv(IRpin);//infared receiver
-int Speed = 255
 
 /*
 myCar.Move(Forward, 255):
@@ -59,6 +59,7 @@ void turn_right(int degrees)
 void setup()
 {
 Serial.begin(115200);
+  myIRrecv.enableIRIn();// Start IR decoding
   myCar.Init();
   myUltrasonic.Init(13,14);
   /*
@@ -95,7 +96,8 @@ Serial.begin(115200);
 
   //tone(buzzer,262);
   
-
+/*
+// turn to avoid objects 
   myServo.attach(servoPin); // initialize servo motor)
   myServo.write(0);
   // eye sensor v2 - best route
@@ -125,20 +127,21 @@ Serial.begin(115200);
   {
     turn_right(abs(required_turn_degrees));
   }
+    */
 }
 
-void loop()
-{
-  //flash left then right
-  digitalWrite(leftLed, LOW);
-  digitalWrite(rightLed, HIGH);
+void loop() {
 
-  delay(1000);
+  // //flash left then right
+  // digitalWrite(leftLed, LOW);
+  // digitalWrite(rightLed, HIGH);
 
-  digitalWrite(leftLed, LOW);
-  digitalWrite(rightLed, HIGH);
+  // delay(1000);
 
-  delay(1000);
+  // digitalWrite(leftLed, LOW);
+  // digitalWrite(rightLed, HIGH);
+
+  // delay(1000);
 
   /*Eye sensor v1
   UT_distance = myUltrasonic.Ranging();
@@ -164,13 +167,35 @@ void loop()
   //     delay(10);
   // }
 
-  if(myIRrecv.decode(0)){
+  if(myIRrecv.decode()){
     lastCommandTime = millis();
     current_decode = myIRrecv.decodedIRData.decodedRawData;
     if (myIRrecv.decodedIRData.flags) {
-      cirrent_decode = last_decode;
+      current_decode = last_decode;
     }
 
   Serial.print(current_decode, HEX);
-  //page 67 on starter kit
+  Serial.println("");
+  switch (current_decode){
+    case 0xB946FF00: myCar.Move(Forward, Speed); break;
+    // Press "up" button to move backwards
+    case 0xEA15FF00: myCar.Move(Backward, Speed); break;
+    // Press "down" button to move backward 
+    case 0xBB44FF00: myCar.Move(Contrarotate, Speed); break;
+    // Press "left" button to turn left 
+    case 0xBC43FF00: myCar.Move(Clockwise, Speed); break;
+    // Press "right" button to turn right 
+    case 0xE916FF00: myCar.Move(Move_Left, Speed); break;
+    //Press button "1" to move left
+    case 0xF20DFF00: myCar.Move(Move_Right, Speed); break;
+    // Press button "3" to move right 
+  }
+  last_decode = current_decode;
+  // Update the stored previous decodedrawData
+  myIRrecv.resume();// Wait for the next IR signal 
+}
+if (millis()-lastCommandTime> commandTimeout) { 
+  myCar.Move(Stop,0);
+  // if no new IR signal within 100 milliseconds, stop the smart car
+}
 }

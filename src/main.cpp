@@ -30,7 +30,6 @@ int Speed = 255;
 #define Anticlockwise Contrarotate
 #define buzzer 33
 #define servoPin 25
-// #define IRpin 4
 #define Left_sensor 35
 #define Right_sesnor 39
 

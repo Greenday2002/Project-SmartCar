@@ -12,6 +12,10 @@ int closest_object = 1000;
 int closest_object_direction = 0;
 float ms_per_degree = 11.0;
 
+bool areLightsOn = false;
+unsigned long lastTriggerTime = 0;
+const unsigned long debounceDelay = 200;
+
 int IRpin = 4;
 unsigned long lastCommandTime; // record the time of last received command
 const unsigned long commandTimeout = 100; //set the time period (milliseconds)
@@ -87,8 +91,8 @@ Serial.begin(115200);
  */
 
   // lights
-  // pinMode(leftLed, OUTPUT);
-  // pinMode(rightLed,OUTPUT);
+  pinMode(leftLed, OUTPUT);
+  pinMode(rightLed,OUTPUT);
 
   // eye sensor
   //Serial.begin(115200);
@@ -189,14 +193,32 @@ void loop() {
     //Press button "1" to move left
     case 0xF20DFF00: myCar.Move(Move_Right, Speed); break;
     // Press button "3" to move right 
-    case 0xBF40FF00: myCar.Move(leftLed, LOW) (rightLed, HIGH) break;
-    // leds on/off
+    case 0xBF40FF00: 
+    unsigned long currentTime = millis();
+    
+      if (currentTime - lastTriggerTime >= debounceDelay) {
+        lastTriggerTime = currentTime;
+        areLightsOn = !areLightsOn;
+        Serial.println("IR Event Registered");
+
+      }
+      break;
+
   }
+
+  if (areLightsOn) {
+    digitalWrite(leftLed, HIGH);
+    digitalWrite(rightLed, HIGH);
+  } else {
+    digitalWrite(leftLed, LOW);
+    digitalWrite(rightLed, LOW);
+  }
+
   last_decode = current_decode;
   // Update the stored previous decodedrawData
   myIRrecv.resume();// Wait for the next IR signal 
 }
-if (millis()-lastCommandTime> commandTimeout) { 
+if (millis()-lastCommandTime > commandTimeout) { 
   myCar.Move(Stop,0);
   // if no new IR signal within 100 milliseconds, stop the smart car
 }
